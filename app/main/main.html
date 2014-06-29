@@ -1,0 +1,55 @@
+
+<h2>Approve</h2>
+
+<div class="input-group col-sm-6">
+  
+  <input ng-model="state" type="text" class="form-control" placeholder="Select a state">
+  <span class="input-group-btn">
+    <button class="btn btn-primary" type="button" ng-click="getDealers()">Get Info</button>
+  </span>
+</div><!-- /input-group -->
+<div>
+
+	<div ng-if="dealers">
+		<h3>Report</h3>
+		<ul>
+			<li>Saved: {{dealers.saved}}</li>
+			<li>To Assess: {{dealers.assess.length}}</li>
+			<li>Not Found: {{dealers.not_found.length}}</li>
+		</ul>
+	</div>
+
+	<div ng-repeat="d in dealers.assess" class="dealer-list">
+		<div class="row">
+			<div class="col-sm-6">
+				<h3>Saved</h3>
+				<p>Name: {{d.saved.name}}</p>
+				<p>Street: {{d.saved.address.street}}</p>
+			</div>
+
+			<div class="col-sm-6">
+				<h3>Suggestion</h3>
+				<p>Name: {{d.suggestion.dealer.name}}</p>
+				<div>
+					<ul>
+						<li>Match: {{d.suggestion.average}}</li>
+						<li ng-repeat="(key, value) in d.suggestion.assessment">
+							{{key}}: {{value}}
+						</li>
+					</ul>	
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-6">
+				<pre>{{d.saved | json}}</pre>
+			</div>
+
+			<div class="col-sm-6">
+				<pre>{{d.suggestion.dealer | json}}</pre>
+			</div>
+		</div>
+		
+	</div>
+</div>
