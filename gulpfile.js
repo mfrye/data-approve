@@ -29,9 +29,9 @@ gulp.task('less', function () {
 gulp.task('vendorJS', function(){
     //concatenate vendor JS files
     gulp.src([
-      '!./bower_components/**/*.min.js',
-      '!./bower_components/bootstrap-less/**/*.js',
-      './bower_components/**/*.js'])
+      './bower_components/angular/angular.js',
+      './bower_components/angular-route/angular-route.js',
+      './bower_components/angular-bootstrap/ui-bootstrap-tpls.js'])
       .pipe(plugins.concat('lib.js'))
       .pipe(gulp.dest('./build'));
 });

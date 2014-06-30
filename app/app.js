@@ -1,12 +1,19 @@
 (function(){
-	'use strict';
+  'use strict';
 
-	angular.module('data-approve', [ 'ngRoute','data-approve-main','templates', 'data-service' ])
-	  .config(function ($routeProvider) {
-	    $routeProvider
-	      .otherwise({
-	        redirectTo: '/'
-	      });
-	  });
-	  
+  angular.module('data-approve', [
+    'ngRoute',
+    'data-approve-main',
+    'templates',
+    'data-service',
+
+    'ui.bootstrap'
+    ])
+    .config(function ($routeProvider) {
+      $routeProvider
+        .otherwise({
+          redirectTo: '/'
+        });
+    });
+    
 })();

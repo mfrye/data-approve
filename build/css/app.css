@@ -1,3 +1,9 @@
 .dealer-list pre {
   max-height: 500px;
 }
+.assess-header h3 {
+  float: left;
+}
+.assess-header .dealer-info {
+  float: right;
+}
