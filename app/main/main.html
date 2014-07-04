@@ -3,16 +3,17 @@
 
 <div class="row">
 	<div class="col-sm-6">
-		<div class="input-group">
+		<div class="form-group">
 		  
-		  <input ng-model="state" type="text" class="form-control" placeholder="Select a state">
-		  <span class="input-group-btn">
-		    <button class="btn btn-primary" type="button" ng-click="getDealers()">Get Info</button>
-		  </span>
+		  <select ng-model="state" class="form-control" ng-options="s.abbreviation as s.name for s in stateOptions">
+		  </select>
+		  <select ng-model="provider" class="form-control" ng-options="p as p for p in providers">
+		  </select>
 		</div><!-- /input-group -->
 	</div>
 
 	<div class="col-sm-6">
+		<button class="btn btn-primary" type="button" ng-click="getDealers()">Get Info</button>
 		<button class="btn btn-primary" type="button" ng-click="saveDealers()">Save</button>
 	</div>
 </div>
@@ -20,6 +21,8 @@
 	<div ng-if="dealers">
 		<h3>Report</h3>
 		<ul>
+			<li>Total: {{dealers.total_count}}</li>
+			<li>Showing: {{stats.start}} - {{stats.end}}</li>
 			<li>Saved: {{dealers.saved}}</li>
 			<li>To Assess: {{dealers.assess.length}}</li>
 			<li>Not Found: {{dealers.not_found.length}}</li>
@@ -42,6 +45,10 @@
 				<div class="assess-header">
 					<h3>Possible Match</h3>
 					<div class="dealer-info">
+
+						<button class="btn btn-warning" ng-click="setAsNone(d)">None of these</button>
+
+						<!-- active match info -->
 						<ul>
 							<li><label>Match</label>: {{d.suggestion.average}}</li>
 							<li ng-repeat="(key, value) in d.suggestion.assessment">

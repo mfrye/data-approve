@@ -5,7 +5,7 @@
     'ngRoute',
     'data-approve-main',
     'templates',
-    'data-service',
+    'services',
 
     'ui.bootstrap'
     ])
@@ -15,5 +15,7 @@
           redirectTo: '/'
         });
     });
+
+  angular.module('services', ['data-service', 'utils', 'app.misc'])
     
 })();

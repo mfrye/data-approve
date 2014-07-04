@@ -10,10 +10,14 @@ angular.module('data-service', [])
   var dealerAPI = {};
 
   // for configuring dealers - matching dealer with 3rd party api data
-  dealerAPI.getInfo = function(state) {
+  dealerAPI.getInfo = function(config) {
     return $http({
       method: 'GET',
-      url: BASE_URL + '/dealerships/update/' + state
+      url: BASE_URL + '/dealerships/update/' + config.state,
+      params: {
+        next: config.next,
+        provider: config.provider
+      }
     });
   };
 

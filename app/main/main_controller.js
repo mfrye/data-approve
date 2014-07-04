@@ -11,9 +11,27 @@
         });
     })
 
-    .controller('MainCtrl', ['$scope', 'dealerAPI', function ($scope, dealerAPI) {
+    .controller('MainCtrl', ['$scope', 'dealerAPI', 'misc', function ($scope, dealerAPI, misc) {
 
-      $scope.state = null;
+      // List of state to populate select
+      $scope.stateOptions = misc.getStates;
+
+      // List of providers
+      $scope.providers = [
+        'google',
+        'edmunds',
+        'cars',
+        'facebook',
+        'twitter'
+      ];
+
+      $scope.stats = {
+        total: null,
+        start: null,
+        end: 0
+      };
+
+      var next = null;
 
       // add opened field to all processed
       function processDealers(dealers) {
@@ -46,6 +64,12 @@
         return toSave;
       }
 
+      // None of the results match
+      $scope.setAsNone = function(dealer) {
+        dealer.suggestion = null;
+      };
+
+      // Save current list of dealers
       $scope.saveDealers = function() {
         var dealers = formatSave($scope.dealers.assess);
 
@@ -60,12 +84,27 @@
 
       // Get dealers from backend
       $scope.getDealers = function() {
+        var config = {
+          state: $scope.state,
+          next: next,
+          provider: $scope.provider
+        };
 
         if ($scope.state) {
-          dealerAPI.getInfo($scope.state)
+          dealerAPI.getInfo(config)
           .success(function(data) {
 
             $scope.dealers = processDealers(data);
+            next = data.next;
+
+            if (!$scope.stats.start) {
+              $scope.stats.start = 0;
+            } else {
+              $scope.stats.start = $scope.stats.start + data.count;
+            }
+
+            $scope.stats.end = $scope.stats.end + data.count;
+
           })
           .error(function(data) {
             console.log(data);
