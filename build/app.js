@@ -2,51 +2,83 @@
   'use strict';
 
   angular.module('data-approve', [
-    'ngRoute',
-    'data-approve-main',
+    'ui.router',
+    'tools.controllers',
+    'tools.components',
     'templates',
     'services',
 
     'ui.bootstrap'
     ])
-    .config(function ($routeProvider) {
-      $routeProvider
-        .otherwise({
-          redirectTo: '/'
-        });
-    });
+    .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+      
+      $stateProvider
+        .state('config', {
+          url: "/config",
+          templateUrl: 'pages/config-place.html',
+          controller: 'ConfigPlaceCtrl'
+        })
+        .state('reviews', {
+          url: "/get-reviews",
+          templateUrl: 'pages/get-reviews.html',
+          controller: 'GetReviewsCtrl'
+        })
+        
+        $urlRouterProvider.otherwise('/config');
+    }]);
 
   angular.module('services', ['data-service', 'utils', 'app.misc'])
     
 })();
 'app controller goes here';
-'common service goes here';
+(function() {
+  'use strict';
+
+angular.module('tools.components', [])
+
+.directive('comparedValues', ['utils', function(utils) {
+  return {
+    scope: {
+      place: '=',
+      key: '=',
+      provider: '='
+    },
+    restrict: 'EA',
+    template: '<span><label>{{key}}</label>: {{value}}</span>',
+    link: function(scope, elm, attrs) {
+
+      scope.value = utils.getPropByString(scope.place, scope.key, scope.provider);
+
+      console.log(scope.place);
+
+      console.log(scope.key);
+      console.log(scope.value);
+    }
+  }
+
+}])
+
+.filter('percentage', ['$filter', function($filter) {
+    return function(input, decimals) {
+        return $filter('number')(input*100, decimals)+'%';
+    };
+}]);
+
+})();
 (function(){
   'use strict';
 
-  angular.module('data-approve-main',['ngRoute'])
-    .config(function ($routeProvider) {
-      console.log('hello');
-      $routeProvider
-        .when('/', {
-          templateUrl: 'main/main.html',
-          controller: 'MainCtrl'
-        });
-    })
-
-    .controller('MainCtrl', ['$scope', 'dealerAPI', 'misc', function ($scope, dealerAPI, misc) {
+  angular.module('tools.controllers',[])
+    .controller('ConfigPlaceCtrl', ['$scope', 'placeAPI', 'misc', 'utils', function ($scope, placeAPI, misc, utils) {
 
       // List of state to populate select
       $scope.stateOptions = misc.getStates;
 
       // List of providers
-      $scope.providers = [
-        'google',
-        'edmunds',
-        'cars',
-        'facebook',
-        'twitter'
-      ];
+      $scope.providers = misc.getProviders;
+
+      $scope.state = $scope.stateOptions[0].abbreviation;
+      $scope.provider = $scope.providers[0];
 
       $scope.stats = {
         total: null,
@@ -56,36 +88,15 @@
 
       var next = null;
 
-      // add opened field to all processed
-      function processDealers(dealers) {
-        angular.forEach(dealers.assess, function(dealer) {
-          for (var i = 0, l = dealer.processed.length; i < l; i++) {
+      // Return value of compared fields
+      $scope.comparedValue = utils.getPropByString;
 
-            // set to show the first entry in accordion
-            dealer.processed[i].open = i === 0 ? true : false;
-          }
-        });
-
-        return dealers;
-      }
-
+      
       // Set possible match area to current open accordion
-      $scope.showCurrentOpen = function(dealer, possible) {
-        dealer.suggestion = possible;
+      $scope.showCurrentOpen = function(place, possible) {
+        place.suggestion = possible;
       };
-
-      function formatSave(dealers) {
-        var toSave = [];
-
-        for (var i = 0, l = dealers.length; i < l; i++) {
-
-          toSave.push({
-            saved: dealers[i].saved,
-            match: dealers[i].suggestion.dealer
-          });
-        }
-        return toSave;
-      }
+      
 
       // None of the results match
       $scope.setAsNone = function(dealer) {
@@ -93,10 +104,12 @@
       };
 
       // Save current list of dealers
-      $scope.saveDealers = function() {
-        var dealers = formatSave($scope.dealers.assess);
+      $scope.savePlaces = function() {
+        var places = utils.formatSave($scope.places.assess, $scope.provider);
 
-        dealerAPI.configDealer(dealers)
+        console.log(places);
+
+        placeAPI.savePlace(places)
         .success(function(data) {
 
         })
@@ -106,82 +119,84 @@
       };
 
       // Get dealers from backend
-      $scope.getDealers = function() {
-        var config = {
+      $scope.getPlaces = function() {
+        var params = {
           state: $scope.state,
           next: next,
           provider: $scope.provider
         };
 
-        if ($scope.state) {
-          dealerAPI.getInfo(config)
-          .success(function(data) {
+        placeAPI.getInfo(params)
+        .success(function(data) {
 
-            $scope.dealers = processDealers(data);
-            next = data.next;
+          $scope.places = utils.processPlaces(data);
+          next = data.next;
 
-            if (!$scope.stats.start) {
-              $scope.stats.start = 0;
-            } else {
-              $scope.stats.start = $scope.stats.start + data.count;
-            }
+          if (!$scope.stats.start) {
+            $scope.stats.start = 0;
+          } else {
+            $scope.stats.start = $scope.stats.start + data.count;
+          }
 
-            $scope.stats.end = $scope.stats.end + data.count;
+          $scope.stats.end = $scope.stats.end + data.count;
 
-          })
-          .error(function(data) {
-            console.log(data);
-          });
-        }
+        })
+        .error(function(data) {
+          console.log(data);
+        });
       };
 
-    }]);
+    }])
+
+    .controller('GetReviewsCtrl', ['$scope', 'placeAPI', 'misc', 'utils', function ($scope, placeAPI, misc, utils) {
+
+      // List of state to populate select
+      $scope.stateOptions = misc.getStates;
+
+      // List of providers
+      $scope.providers = misc.getProviders;
+
+      $scope.state = $scope.stateOptions[0].abbreviation;
+      $scope.provider = $scope.providers[0];
+
+      $scope.stats = {
+        total: null,
+        start: null,
+        end: 0
+      };
+
+      // Get dealers from backend
+      $scope.getReviews = function() {
+        var params = {
+          state: $scope.state,
+          provider: $scope.provider
+        };
+
+        placeAPI.getReviews(params)
+        .success(function(data) {
+
+
+        })
+        .error(function(data) {
+          console.log(data);
+        });
+      };
+
+    }])
 
 })();
-
-(function() {
-  'use strict';
-
-angular.module('data-service', [])
-
-.factory('dealerAPI', ['$http', function($http) {
-  var BASE_URL = 'http://localhost:3000';
-
-  var dealerAPI = {};
-
-  // for configuring dealers - matching dealer with 3rd party api data
-  dealerAPI.getInfo = function(config) {
-    return $http({
-      method: 'GET',
-      url: BASE_URL + '/dealerships/update/' + config.state,
-      params: {
-        next: config.next,
-        provider: config.provider
-      }
-    });
-  };
-
-  dealerAPI.configDealer = function(data) {
-    return $http({
-      method: 'POST',
-      url: BASE_URL + '/dealerships/update',
-      data: data
-    });
-  };
-
-  return dealerAPI;
-
-}]);
-
-})();
-
-
 (function() {
   angular.module('app.misc', [])
 
   .factory('misc', [function() {
 
     var misc = {};
+
+    misc.getProviders = [
+      'google',
+      'yelp',
+      'facebook',
+    ];
 
     misc.getStates = [
         {
@@ -425,11 +440,133 @@ angular.module('data-service', [])
     return misc;
   }]);
 })();
-(function() {
-	angular.module('utils', [])
-	.factory('utils', [function() {
-		var utils = {};
 
-		return utils;
-	}])
+(function() {
+  'use strict';
+
+angular.module('data-service', [])
+
+.factory('placeAPI', ['$http', function($http) {
+  var BASE_URL = 'http://localhost:3000';
+
+  var placeAPI = {};
+
+  // for configuring dealers - matching dealer with 3rd party api data
+  placeAPI.getInfo = function(data) {
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/config/provider/' + data.provider,
+      params: {
+        next: data.next,
+        state: data.state
+      }
+    });
+  };
+
+  placeAPI.savePlace = function(data) {
+    return $http({
+      method: 'POST',
+      url: BASE_URL + '/place',
+      data: data
+    });
+  };
+
+  placeAPI.getReviews = function(data) {
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/config/reviews/' + data.provider,
+      params: {
+        next: data.next,
+        state: data.state
+      }
+    });
+  };
+
+  return placeAPI;
+
+}]);
+
+})();
+
+
+(function() {
+  angular.module('utils', [])
+  .factory('utils', [function() {
+    var utils = {};
+
+    // get value in obj from string reference
+    utils.getPropByString = function(obj, propString, provider) {
+      if (!propString)
+          return obj;
+
+      var prop, props = propString.split('.');
+
+      var value;
+
+      for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
+          prop = props[i];
+
+          var candidate = obj[prop];
+          if (candidate !== undefined) {
+              obj = candidate;
+          } else {
+              break;
+          }
+      }
+
+      value = obj[props[i]];
+
+      // Check if array - for yelp API
+      if (Array.isArray(value)) {
+        value = value[0];
+      }
+
+      // Google has address clumped together (1234 example st, detroit)
+      if (provider && provider === 'google' && propString === 'vicinity') {
+        value = value.split(',')[0];
+      }
+
+      return value;
+    };
+
+    // Merge saved with found result from Google (get place_id)
+    // Return arr of places to save
+    utils.formatSave = function(places, provider) {
+      var toSave = [];
+
+      for (var i = 0, l = places.length; i < l; i++) {
+
+        // Only save places that have been selected (have a suggestion set)
+        if (places[i].suggestion) {
+
+          // Save formatting by provider
+          switch(provider) {
+            case 'google':
+              places[i].saved.google.id = places[i].suggestion.place.place_id;
+              toSave.push(places[i].saved);
+            case 'facebook':
+              places[i].saved.facebook.id = places[i].suggestion.place.id;
+              places[i].saved.facebook.url = places[i].suggestion.place.link;
+              toSave.push(places[i].saved);
+          }
+        }
+      }
+      return toSave;
+    };
+
+    // add opened field to all processed
+    utils.processPlaces = function(places) {
+      angular.forEach(places.assess, function(place) {
+        for (var i = 0, l = place.processed.length; i < l; i++) {
+
+          // set to show the first entry in accordion
+          place.processed[i].open = i === 0 ? true : false;
+        }
+      });
+
+      return places;
+    };
+
+    return utils;
+  }])
 })();

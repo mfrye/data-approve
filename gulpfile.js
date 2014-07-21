@@ -3,7 +3,7 @@ var plugins = require("gulp-load-plugins")({lazy:false});
 
 gulp.task('scripts', function(){
     //combine all js files of the app
-    gulp.src(['!./app/**/*_test.js','./app/**/*.js'])
+    gulp.src(['./app/**/*.js'])
         .pipe(plugins.jshint())
         .pipe(plugins.jshint.reporter('default'))
         .pipe(plugins.concat('app.js'))
@@ -30,7 +30,7 @@ gulp.task('vendorJS', function(){
     //concatenate vendor JS files
     gulp.src([
       './bower_components/angular/angular.js',
-      './bower_components/angular-route/angular-route.js',
+      './bower_components/angular-ui-router/release/angular-ui-router.js',
       './bower_components/angular-bootstrap/ui-bootstrap-tpls.js'])
       .pipe(plugins.concat('lib.js'))
       .pipe(gulp.dest('./build'));

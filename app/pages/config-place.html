@@ -1,0 +1,158 @@
+
+<div class="container">
+  <div class="row well">
+    <h2>Review and Approve Places</h2>
+
+    <div class="col-sm-6">
+      <div class="form-group">
+        <label>State</label>
+        <select ng-model="state" class="form-control" ng-options="s.abbreviation as s.name for s in stateOptions">
+        </select>
+      </div><!-- /input-group -->
+      <div class="form-group">
+        <label>Provider</label>
+        <select ng-model="provider" class="form-control" ng-options="p as p for p in providers">
+        </select>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <button class="btn btn-lg btn-primary" type="button" ng-click="getPlaces()">Get Places</button>
+      <button class="btn btn-lg btn-primary" type="button" ng-click="savePlaces()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div ng-if="places" class="well">
+    <h3>Report</h3>
+    <ul>
+      <li>Total: {{places.count}}</li>
+      <li>Already Configured: {{places.configured}}</li>
+      <li>Saved: {{places.found}}</li>
+      <li>To Assess: {{places.assess.length}}</li>
+      <li>Not Found: {{places.not_found.length}}</li>
+    </ul>
+  </div>
+</div>
+
+<tabset>
+  <tab heading="To Assess">
+    <div>
+      <div ng-repeat="place in places.assess" class="dealer-list">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="assess-header">
+              <h3>Saved</h3>
+              <div class="dealer-info">
+                <p><label>Name:</label> {{place.saved.name}}</p>
+                <p><label>Street:</label> {{place.saved.address.street}}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="row">
+              <!-- active match info -->
+              <div class="col-sm-6">
+                <p><label>Name:</label> {{place.suggestion.place.name}}</p>
+                <ul>
+                  <li><label>Match</label>: {{place.suggestion.average | percentage:2 }}</li>
+                  <li ng-repeat="(key, value) in place.suggestion.assessment">
+                    <label>{{key}}</label>: {{value | percentage:2 }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-sm-6">
+                <div class="pull-right">
+
+                  <button class="btn btn-warning" ng-click="setAsNone(place)">None of these</button>
+                </div>  
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- place detail -->
+        <div class="row">
+          <!-- potential places -->
+          <div class="col-sm-6">
+            <pre>{{place.saved | json}}</pre>
+          </div>
+
+          <!-- potential places -->
+          <div class="col-sm-6">
+            <accordion close-others="true">
+                
+                <accordion-group heading="{{option.place.name}}" ng-repeat="option in place.processed" is-open="option.open" ng-click="showCurrentOpen(place, option)">
+                  <pre>{{option.place | json}}</pre>
+                </accordion-group>
+
+            </accordion>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </tab>
+  <tab heading="Not Found">
+    <div>
+      <div ng-repeat="place in places.not_found" class="dealer-list">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="assess-header">
+              <h3>Saved</h3>
+              <div class="dealer-info">
+                <p><label>Name:</label> {{place.saved.name}}</p>
+                <p><label>Street:</label> {{place.saved.address.street}}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="row">
+              <!-- active match info -->
+              <div class="col-sm-6">
+                <p><label>Name:</label> {{place.suggestion.place.name}}</p>
+                <ul>
+                  <li><label>Match</label>: {{place.suggestion.average | percentage:2 }}</li>
+                  <li ng-repeat="(key, value) in place.suggestion.assessment">
+                    <label>{{key}}</label>: {{value | percentage:2 }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-sm-6">
+                <div class="pull-right">
+
+                  <button class="btn btn-warning" ng-click="setAsNone(place)">None of these</button>
+                </div>  
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- place detail -->
+        <div class="row">
+          <!-- potential places -->
+          <div class="col-sm-6">
+            <pre>{{place.saved | json}}</pre>
+          </div>
+
+          <!-- potential places -->
+          <div class="col-sm-6">
+            <accordion close-others="true">
+                
+                <accordion-group heading="{{option.place.name}}" ng-repeat="option in place.processed" is-open="option.open" ng-click="showCurrentOpen(place, option)">
+                  <pre>{{option.place | json}}</pre>
+                </accordion-group>
+
+            </accordion>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </tab>
+</tabset>

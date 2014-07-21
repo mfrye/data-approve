@@ -5,6 +5,12 @@
 
     var misc = {};
 
+    misc.getProviders = [
+      'google',
+      'yelp',
+      'facebook',
+    ];
+
     misc.getStates = [
         {
             "name": "Alabama",

@@ -1,0 +1,24 @@
+
+<div class="container">
+	<div class="row well">
+		<h2>Get Reviews</h2>
+
+		<div class="col-sm-6">
+			<div class="form-group">
+			  <label>State</label>
+			  <select ng-model="state" class="form-control" ng-options="s.abbreviation as s.name for s in stateOptions">
+			  </select>
+			</div><!-- /input-group -->
+			<div class="form-group">
+				<label>Provider</label>
+				<select ng-model="provider" class="form-control" ng-options="p as p for p in providers">
+			  </select>
+			</div>
+		</div>
+
+		<div class="col-sm-6">
+			<button class="btn btn-lg btn-primary" type="button" ng-click="getReviews()">Get Reviews</button>
+			<button class="btn btn-lg btn-primary" type="button" ng-click="savePlaces()">Save</button>
+		</div>
+	</div>
+</div>
