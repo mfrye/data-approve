@@ -8,15 +8,26 @@
     'templates',
     'services',
 
+    'angularFileUpload',
     'ui.bootstrap'
     ])
     .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
       
       $stateProvider
+        .state('upload', {
+          url: "/upload-file",
+          templateUrl: 'pages/upload-file.html',
+          controller: 'UploadFileCtrl'
+        })
         .state('config', {
           url: "/config",
           templateUrl: 'pages/config-place.html',
           controller: 'ConfigPlaceCtrl'
+        })
+        .state('edit', {
+          url: "/edit-place",
+          templateUrl: 'pages/get-reviews.html',
+          controller: 'GetReviewsCtrl'
         })
         .state('reviews', {
           url: "/get-reviews",

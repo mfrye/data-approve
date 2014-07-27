@@ -29,7 +29,9 @@ gulp.task('less', function () {
 gulp.task('vendorJS', function(){
     //concatenate vendor JS files
     gulp.src([
+      './bower_components/ng-file-upload/angular-file-upload-shim.min.js',
       './bower_components/angular/angular.js',
+      './bower_components/ng-file-upload/angular-file-upload.min.js',
       './bower_components/angular-ui-router/release/angular-ui-router.js',
       './bower_components/angular-bootstrap/ui-bootstrap-tpls.js'])
       .pipe(plugins.concat('lib.js'))

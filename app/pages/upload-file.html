@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="row well">
+
+    <div class="form-group">
+      <label>File Name</label>
+      <input ng-model="filename" type="text" class="form-control">
+    </div>
+
+    <div class="form-group">
+      <input type="file" ng-file-select="onFileSelect($files)">
+    </div>
+
+    <button ng-click="uploadFile()" class="btn btn-default">Upload</button>
+
+    <button ng-click="upload.abort()" class="btn btn-default">Cancel Upload</button>
+  </div>
+</div>

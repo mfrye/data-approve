@@ -8,15 +8,26 @@
     'templates',
     'services',
 
+    'angularFileUpload',
     'ui.bootstrap'
     ])
     .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
       
       $stateProvider
+        .state('upload', {
+          url: "/upload-file",
+          templateUrl: 'pages/upload-file.html',
+          controller: 'UploadFileCtrl'
+        })
         .state('config', {
           url: "/config",
           templateUrl: 'pages/config-place.html',
           controller: 'ConfigPlaceCtrl'
+        })
+        .state('edit', {
+          url: "/edit-place",
+          templateUrl: 'pages/get-reviews.html',
+          controller: 'GetReviewsCtrl'
         })
         .state('reviews', {
           url: "/get-reviews",
@@ -69,6 +80,37 @@ angular.module('tools.components', [])
   'use strict';
 
   angular.module('tools.controllers',[])
+    .controller('UploadFileCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
+
+
+      // Upload file
+      $scope.onFileSelect = function($files) {
+
+        $scope.files = $files;
+
+        for (var i = 0; i < $files.length; i++) {
+          var file = $files[i];
+          
+          $scope.upload = placeAPI.upload(file, $scope.filename)
+            .progress(function(evt) {
+              console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
+            })
+            .success(function(data, status, headers, config) {
+              // file is uploaded successfully
+              console.log(data);
+            })
+            .error(function(data) {
+              console.log(data);
+            });
+        }
+      };
+
+      $scope.uploadFile = function() {
+        $scope.onFileSelect($scope.files);
+      }
+
+    }])
+
     .controller('ConfigPlaceCtrl', ['$scope', 'placeAPI', 'misc', 'utils', function ($scope, placeAPI, misc, utils) {
 
       // List of state to populate select
@@ -446,7 +488,7 @@ angular.module('tools.components', [])
 
 angular.module('data-service', [])
 
-.factory('placeAPI', ['$http', function($http) {
+.factory('placeAPI', ['$http', '$upload', function($http, $upload) {
   var BASE_URL = 'http://localhost:3000';
 
   var placeAPI = {};
@@ -479,6 +521,14 @@ angular.module('data-service', [])
         next: data.next,
         state: data.state
       }
+    });
+  };
+
+  placeAPI.upload = function(file, filename) {
+    return $upload.upload({
+      url: BASE_URL + '/company/places', 
+      file: file,
+      fileName: filename
     });
   };
 

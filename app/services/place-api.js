@@ -4,7 +4,7 @@
 
 angular.module('data-service', [])
 
-.factory('placeAPI', ['$http', function($http) {
+.factory('placeAPI', ['$http', '$upload', function($http, $upload) {
   var BASE_URL = 'http://localhost:3000';
 
   var placeAPI = {};
@@ -37,6 +37,14 @@ angular.module('data-service', [])
         next: data.next,
         state: data.state
       }
+    });
+  };
+
+  placeAPI.upload = function(file, filename) {
+    return $upload.upload({
+      url: BASE_URL + '/company/places', 
+      file: file,
+      fileName: filename
     });
   };
 
