@@ -43,6 +43,8 @@
     utils.formatSave = function(places, provider) {
       var toSave = [];
 
+      console.log(provider);
+
       for (var i = 0, l = places.length; i < l; i++) {
 
         // Only save places that have been selected (have a suggestion set)
@@ -52,12 +54,14 @@
           switch(provider) {
             case 'google':
               places[i].saved.google.id = places[i].suggestion.place.place_id;
-              toSave.push(places[i].saved);
+              break;
             case 'facebook':
               places[i].saved.facebook.id = places[i].suggestion.place.id;
               places[i].saved.facebook.url = places[i].suggestion.place.link;
-              toSave.push(places[i].saved);
+              break;
           }
+
+          toSave.push(places[i].saved);
         }
       }
       return toSave;

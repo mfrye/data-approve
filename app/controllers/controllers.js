@@ -2,6 +2,11 @@
   'use strict';
 
   angular.module('tools.controllers',[])
+    .controller('ScanDataCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
+
+
+    }])
+
     .controller('UploadFileCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
 
 
