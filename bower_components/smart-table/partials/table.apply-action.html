@@ -1,0 +1,19 @@
+<div class="pull-left">
+    <div ng-if="!applyActionsBtns" class="dropdown">
+        <a class="dropdown-toggle btn btn-default">
+            Apply Action <i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu">
+            <li ng-repeat="a in applyActions">
+                <a ng-click="action(a.action)">{{a.name}}</a>
+            </li>
+        </ul>
+    </div>
+
+    <ul ng-if="applyActionsBtns" class="mass-actions">
+        <label>Mass Actions</label>
+        <li ng-repeat="a in applyActions">
+            <button ng-click="action(a.action)" class="btn btn-primary">{{a.name}}</button>
+        </li>
+    </ul>
+</div>

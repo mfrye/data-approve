@@ -1,0 +1,11 @@
+<div class="user-progress">
+	<div ng-show="users.length > 0" class="users">
+		<span ng-repeat="u in users">
+			<span ng-class="{ 'text-success': u.progress === numTasks, 'text-danger': u.progress == 0, 'text-warning': inProgress(u.progress) }">
+				{{u.username}}<span ng-if="!inProgress(u.progress)">,</span> <span ng-if="inProgress(u.progress)">{{u.progress}}/{{numTasks}},</span>
+			</span>
+		</span>
+	</div>
+
+	<div ng-if="users.length === 0">-</div>
+</div>

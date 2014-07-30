@@ -1,0 +1,28 @@
+<div class="table-filtering">
+    <div class="filter-header">
+        <h3>Filters</h3>
+
+        <button ng-click="clearAll()" ng-hide="filters.length === 0" class="btn btn-danger">Clear All</button>
+    </div>
+
+    <div>
+        <select ng-model="selectedFilter" ng-options="f.label for f in filterOptions | filter:filterSelected" class="form-control">
+            <option value="">Select a filter</option>
+        </select>
+    </div>
+
+    <table-filter-input class="filter-input"></table-filter-input>
+
+    <div>
+        <ul class="list-unstyled">
+            <li ng-repeat="f in filters | reverse" class="table-filter">
+                <div class="input-group">
+                    <span class="input-group-addon">{{f.label}}</span>
+                    <span class="input-group-addon">{{f.val_label}}</span>
+                </div>
+
+                <button ng-click="removeFilter(f)" class="btn btn-danger"><i class="fa fa-times"></i></button>
+            </li>
+        </ul>
+    </div>
+</div>

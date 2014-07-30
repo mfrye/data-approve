@@ -1,0 +1,261 @@
+// Asset tables
+.custom-table-cell {
+  .dropdown-menu {
+    left: inherit;
+    right: 0;
+    text-align: left;
+  }
+}
+
+// Wrapper around the table so
+// we can apply border-radius
+.smart-table-wrapper {
+    border: 1px solid @table-border-color;
+    border-radius: 6px !important;
+    position: relative;
+    margin-top: 15px;
+}
+
+.smart-table {
+  background-color: transparent !important;
+  color: @table-font-color;
+  font-size: 14px;
+  //font-family: @proxima-nova-light;
+  margin-bottom: 0;
+  .table-image {
+    max-width: 100px;
+    width: 100%;
+  }
+  .smart-table-data-row {
+    border-top: 1px solid @table-border-color;
+  }
+  .smart-table-header-cell:first-child, .smart-table-header-cell:last-child {
+    border-left: medium none;
+  }
+  .smart-table-header-cell {
+    border-top: none;
+    border-bottom: none;
+    border-left: 1px solid @table-border-color;
+    color: @blue-light;
+    font-size: 14px;
+    padding: 8px 20px;
+    vertical-align: middle;
+  }
+  .smart-table-data-cell {
+    border: none;
+    font-size: 12px;
+  }
+  .smart-table-checkbox-cell {
+    padding: 8px 20px;
+  }
+  .smart-table-data-row:last-child td:first-child {
+    border-radius: 0 0 0 6px;
+  }
+  .smart-table-data-row:last-child td:last-child {
+    border-radius: 0 0 6px 0;
+  }
+  .preferred-payment.ga {
+    font-size: 25px;
+    color: @blue-dark;
+  }
+
+  .smart-table-payout-headers {
+    height: 15px;
+    td {
+      padding: 0px;
+    }
+  }
+
+  .smart-table-payout-headers {
+    height: 0;
+    td {
+      padding: 0 !important;
+      > div {
+        position: relative;
+        top: -24px;
+      }
+    }
+  }
+
+}
+
+// Manage tables
+
+.table-row-saving {
+  background: rgba(97, 97, 97, 0.31);
+  position: absolute;
+}
+
+// Temporary saving indicator
+.table-row-saving .row-saving-inner {
+  color: white;
+  text-align: center;
+  font-size: 30px;
+  margin: 38px;
+  text-transform: uppercase;
+  text-shadow: 1px 1px rgb(121, 121, 121);
+}
+
+
+// Top right section of table
+// Has pagination plus page size
+.table-top-paginate {
+  float: right;
+  .pagination-indicator {
+    padding: 5px 0;
+  }
+  .pagination {
+    margin: 0;
+    > li > a {
+      cursor: pointer;
+    }
+  }
+  div {
+    float: left;
+    margin-left: 5px;
+  }
+  .dropdown .btn-gray i {
+    margin: 0;
+  }
+  .dropdown-menu {
+    right: 0;
+    left: inherit;
+    > li > a {
+      cursor: pointer
+    }
+  }
+}
+
+
+// Dropdown column
+asset-table-dropdown, manage-table-btn {
+  .dropdown {
+    background-color: @gray;
+    border-radius: 2px;
+    color: @white;
+    cursor: pointer;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+
+    .dropdown-toggle {
+      padding: 0px 5px 0px 5px;
+      color: @white;
+      display: block;
+      white-space: nowrap;
+      text-decoration: none;
+      > span {
+        margin-right: 3px;
+      }
+    }
+  }
+  .dropdown.open, .dropdown:hover {
+    background-color: @gray-dark;
+  }
+}
+
+// Smart table header
+.smart-table-header {
+  margin: 25px 0 0;
+  position: relative;
+  .table-apply-action {
+    position: absolute;
+    bottom: 0;
+  }
+  .pagination {
+    margin: 0;
+  }
+}
+
+// Pagination
+.smart-table-footer {
+  .pagination-wrapper {
+    text-align: center;
+    li {
+      cursor: pointer;
+    }
+  }
+}
+
+/*
+  Filters
+ --------------------------
+*/
+
+.table-filtering {
+  .filter-header {
+    margin-bottom: 20px;
+    h2 {
+      display: inline-block;
+      margin: 4px 0;
+    }
+    button {
+      float: right;
+    }
+  }
+  .filter-input {
+    display: block;
+    margin: 20px 0;
+  }
+  .table-filter {
+    position: relative;
+    margin-bottom: 15px;
+
+    .input-group {
+      width: 100%;
+      height: 35px;
+    }
+    .input-group-addon {
+      width: 50%;
+      white-space: normal;
+      color: @white;
+    }
+    .input-group-addon:first-child {
+      background-color: @blue-light;
+    }
+    .input-group-addon:last-child {
+      background-color: @gray-dark;
+    }
+  }
+  .table-filter button {
+    border: medium none;
+    border-radius: 15px;
+    height: 24px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    width: 24px;
+      i {
+        margin: 0;
+        font-size: 16px;
+        height: 100%;
+        left: 0;
+        line-height: 24px;
+        position: absolute;
+        top: -3px;
+        width: 100%;
+      }
+  }
+  .input-money {
+    input {
+      padding-right: 30px;
+    }
+    .input-cents {
+      position: absolute;
+      top: 7px;
+      right: 50px;
+      z-index: 10;
+      color: @gray;
+    }
+  }
+  .datepicker-input .dropdown-menu {
+    table {
+      margin: 3px 8px;
+    }
+    th,td {
+      padding: 1px;
+    }
+  }
+}

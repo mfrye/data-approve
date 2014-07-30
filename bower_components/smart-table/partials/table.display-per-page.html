@@ -1,0 +1,22 @@
+<div class="table-top-paginate">
+
+    <div class="pagination-indicator">
+        {{label}}
+        <span ng-if="displayedCollection.length !== 0"> {{pageStartNumber}}-{{pageEndNumber}} of {{totalRows}}</span>
+        <span ng-if="displayedCollection.length === 0"> (no results)</span>
+    </div>
+
+    <div class="dropdown">
+        <a class="dropdown-toggle btn btn-default">
+            <i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a>Display per page:</a></li>
+            <li ng-repeat="r in pageResults">
+                <a x-name="option" ng-click="setDisplayPerPage(r.value)">{{r.text}}</a>
+            </li>
+        </ul>
+    </div>
+
+    <div pagination-smart-table="" num-pages="numberOfPages" max-size="3" current-page="currentPage" previous-text="<" next-text=">"></div>
+</div>

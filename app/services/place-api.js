@@ -9,6 +9,14 @@ angular.module('data-service', [])
 
   var placeAPI = {};
 
+  placeAPI.getPlaces = function() {
+    console.log('getting')
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/places'
+    });
+  };
+
   // for configuring dealers - matching dealer with 3rd party api data
   placeAPI.getInfo = function(data) {
     return $http({
@@ -45,6 +53,13 @@ angular.module('data-service', [])
       url: BASE_URL + '/company/places', 
       file: file,
       fileName: filename
+    });
+  };
+
+  placeAPI.setGeocode = function() {
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/config/geocode'
     });
   };
 

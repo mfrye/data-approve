@@ -1,0 +1,23 @@
+<div class="container-fluid">
+
+	<h3>Places Table</h3>
+	
+	<div class="row">
+
+		<!-- Table filter -->
+	<div class="col-sm-3 sidebar">
+		<div class="search">
+			<input ng-model="table.config.search" class="form-control" type="text" placeholder="Search">
+		</div>
+
+		<!-- table filtering system -->
+		<table-filters config="table.filterConfig" filters="table.filters"></table-filters>
+	</div>
+
+	<div class="col-sm-9">
+
+		<!-- the table -->
+		<smart-table config="table.config" filters="table.filters" columns="table.columns" rows="table.data"></smart-table>
+
+	</div>
+</div>

@@ -9,7 +9,8 @@
     'services',
 
     'angularFileUpload',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'custom.tables'
     ])
     .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
       
@@ -24,11 +25,29 @@
           templateUrl: 'pages/config-place.html',
           controller: 'ConfigPlaceCtrl'
         })
-        .state('edit', {
-          url: "/edit-place",
-          templateUrl: 'pages/get-reviews.html',
-          controller: 'GetReviewsCtrl'
+        .state('scan_data', {
+          url: "/scan-data",
+          templateUrl: 'pages/scan-data.html',
+          controller: 'ScanDataCtrl'
         })
+
+        // Manage Places
+        .state('places', {
+          url: "/places",
+          templateUrl: 'pages/places.html',
+          abstract: true
+        })
+        .state('places.main', {
+          url: '',
+          templateUrl: 'pages/places.main.html',
+          controller: 'ManagePlacesCtrl'
+        })
+        .state('places.detail', {
+          url: "/:id",
+          templateUrl: 'pages/places.detail.html',
+          controller: 'ManagePlacesDetailCtrl'
+        })
+
         .state('reviews', {
           url: "/get-reviews",
           templateUrl: 'pages/get-reviews.html',
@@ -80,8 +99,82 @@ angular.module('tools.components', [])
   'use strict';
 
   angular.module('tools.controllers',[])
+    .controller('ManagePlacesCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
+
+      // Table filtering
+      // ===============
+
+      // pass in custom filters for this table
+      var filterConfig = {
+          filters: [
+          {
+              label: 'by state',
+              param: 'state',
+              template: 'text',
+              filterFunc: function (item, filter) {
+                  return item.value.address.state === filter.param_val;
+              }
+          },
+          {
+              label: 'google configured',
+              param: 'google',
+              template: 'select',
+              options: [
+              { label: 'False', value: false },
+              { label: 'True', value: true}
+              ],
+              filterFunc: function (item, filter) {
+                  return item.value.google.id === filter.param_val;
+              }
+          }]
+      };
+
+      // Table config
+      // ============
+
+      $scope.table = {
+        data: [],
+        filters: [],
+        filterConfig: filterConfig,
+
+        columns: [
+          { label: 'Name', map: 'value.name' },
+          { label: 'Street', map: 'value.address.street' },
+          { label: 'State', map: 'value.address.state' },
+          { label: 'Geocord', map: 'value.location.longitude' },
+          { label: 'Google ID', map: 'value.google.id' },
+          { label: 'Facebook ID', map: 'value.facebook.id' },
+          { label: 'Yelp ID', map: 'value.yelp.id' },
+        ],
+
+        config: {
+          selectionMode: 'multiple',
+          displaySelectionCheckbox: true,
+          //applyActions: applyActions,
+          //manageActions: manageActions,
+          tableClass: '',
+          search: '',
+        }
+      }
+
+      // Initialize
+      placeAPI.getPlaces()
+      .success(function(data) {
+        $scope.table.data = data.rows;
+
+        console.log($scope.table.data);
+      })
+
+    }])
+
     .controller('ScanDataCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
 
+      $scope.setGeocode = function() {
+        placeAPI.setGeocode()
+        .success(function(data) {
+
+        });
+      };
 
     }])
 
@@ -498,6 +591,14 @@ angular.module('data-service', [])
 
   var placeAPI = {};
 
+  placeAPI.getPlaces = function() {
+    console.log('getting')
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/places'
+    });
+  };
+
   // for configuring dealers - matching dealer with 3rd party api data
   placeAPI.getInfo = function(data) {
     return $http({
@@ -534,6 +635,13 @@ angular.module('data-service', [])
       url: BASE_URL + '/company/places', 
       file: file,
       fileName: filename
+    });
+  };
+
+  placeAPI.setGeocode = function() {
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/config/geocode'
     });
   };
 
@@ -604,6 +712,10 @@ angular.module('data-service', [])
             case 'facebook':
               places[i].saved.facebook.id = places[i].suggestion.place.id;
               places[i].saved.facebook.url = places[i].suggestion.place.link;
+              break;
+            case 'yelp':
+              places[i].saved.yelp.id = places[i].suggestion.place.id;
+              places[i].saved.yelp.url = places[i].suggestion.place.url;
               break;
           }
 

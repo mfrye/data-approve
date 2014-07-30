@@ -9,7 +9,8 @@
     'services',
 
     'angularFileUpload',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'custom.tables'
     ])
     .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
       
@@ -24,11 +25,29 @@
           templateUrl: 'pages/config-place.html',
           controller: 'ConfigPlaceCtrl'
         })
-        .state('edit', {
-          url: "/edit-place",
-          templateUrl: 'pages/get-reviews.html',
-          controller: 'GetReviewsCtrl'
+        .state('scan_data', {
+          url: "/scan-data",
+          templateUrl: 'pages/scan-data.html',
+          controller: 'ScanDataCtrl'
         })
+
+        // Manage Places
+        .state('places', {
+          url: "/places",
+          templateUrl: 'pages/places.html',
+          abstract: true
+        })
+        .state('places.main', {
+          url: '',
+          templateUrl: 'pages/places.main.html',
+          controller: 'ManagePlacesCtrl'
+        })
+        .state('places.detail', {
+          url: "/:id",
+          templateUrl: 'pages/places.detail.html',
+          controller: 'ManagePlacesDetailCtrl'
+        })
+
         .state('reviews', {
           url: "/get-reviews",
           templateUrl: 'pages/get-reviews.html',

@@ -18,6 +18,13 @@ gulp.task('templates',function(){
         .pipe(gulp.dest('./build'));
 });
 
+gulp.task('fonts', function () {
+  gulp.src([
+    './app/fonts/*'
+  ])
+    .pipe(gulp.dest('./build/fonts'));
+});
+
 gulp.task('less', function () {
   gulp.src([
     './app/less/app.less'
@@ -33,7 +40,9 @@ gulp.task('vendorJS', function(){
       './bower_components/angular/angular.js',
       './bower_components/ng-file-upload/angular-file-upload.min.js',
       './bower_components/angular-ui-router/release/angular-ui-router.js',
-      './bower_components/angular-bootstrap/ui-bootstrap-tpls.js'])
+      './bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+      './bower_components/smart-table/dist/smart-table-main.js'
+    ])
       .pipe(plugins.concat('lib.js'))
       .pipe(gulp.dest('./build'));
 });
@@ -57,7 +66,7 @@ gulp.task('watch',function(){
     gulp.watch([
         'build/**/*.html',        
         'build/**/*.js',
-        'build/**/*.css'        
+        'build/**/*.less'        
     ], function(event) {
         return gulp.src(event.path)
             .pipe(plugins.connect.reload());
@@ -75,4 +84,4 @@ gulp.task('connect', plugins.connect.server({
     livereload: true
 }));
 
-gulp.task('default',['connect','scripts','templates','less','copy-index','vendorJS','vendorLess','watch']);
+gulp.task('default',['connect','scripts','templates','fonts', 'less','copy-index','vendorJS','vendorLess','watch']);

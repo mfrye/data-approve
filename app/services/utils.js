@@ -59,6 +59,10 @@
               places[i].saved.facebook.id = places[i].suggestion.place.id;
               places[i].saved.facebook.url = places[i].suggestion.place.link;
               break;
+            case 'yelp':
+              places[i].saved.yelp.id = places[i].suggestion.place.id;
+              places[i].saved.yelp.url = places[i].suggestion.place.url;
+              break;
           }
 
           toSave.push(places[i].saved);

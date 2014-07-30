@@ -1,0 +1,19 @@
+<div class="custom-table-cell">
+    <div class="pull-right">
+        <div ng-if="manageActions.length > 1" class="dropdown hug-left">
+            <a class="dropdown-toggle btn btn-default">
+                <span ng-show='manageActionsLabel'>{{manageActionsLabel}}</span>
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu">
+                <li ng-repeat="a in manageActions">
+                    <a x-name="option" ng-click="action(a.action)">{{a.name}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div ng-if="manageActions.length === 1">
+            <button ng-click="action(manageActions[0].action)" class="btn btn-default">{{manageActions[0].name}}</a>
+        </div>
+    </div>
+</div>
