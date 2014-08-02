@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  angular.module('tools.controllers',[])
+  angular.module('tools.controllers')
     .controller('ManagePlacesCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
 
       // Table filtering
@@ -70,16 +70,6 @@
 
     }])
 
-    .controller('ScanDataCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
-
-      $scope.setGeocode = function() {
-        placeAPI.setGeocode()
-        .success(function(data) {
-
-        });
-      };
-
-    }])
 
     .controller('UploadFileCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
 

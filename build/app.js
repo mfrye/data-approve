@@ -2,103 +2,168 @@
   'use strict';
 
   angular.module('data-approve', [
-    'ui.router',
     'tools.controllers',
     'tools.components',
     'templates',
     'services',
 
+    'ui.router',
     'angularFileUpload',
     'ui.bootstrap',
     'custom.tables'
     ])
-    .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
-      
-      $stateProvider
-        .state('upload', {
-          url: "/upload-file",
-          templateUrl: 'pages/upload-file.html',
-          controller: 'UploadFileCtrl'
-        })
-        .state('config', {
-          url: "/config",
-          templateUrl: 'pages/config-place.html',
-          controller: 'ConfigPlaceCtrl'
-        })
-        .state('scan_data', {
-          url: "/scan-data",
-          templateUrl: 'pages/scan-data.html',
-          controller: 'ScanDataCtrl'
-        })
+    
 
-        // Manage Places
-        .state('places', {
-          url: "/places",
-          templateUrl: 'pages/places.html',
-          abstract: true
-        })
-        .state('places.main', {
-          url: '',
-          templateUrl: 'pages/places.main.html',
-          controller: 'ManagePlacesCtrl'
-        })
-        .state('places.detail', {
-          url: "/:id",
-          templateUrl: 'pages/places.detail.html',
-          controller: 'ManagePlacesDetailCtrl'
-        })
-
-        .state('reviews', {
-          url: "/get-reviews",
-          templateUrl: 'pages/get-reviews.html',
-          controller: 'GetReviewsCtrl'
-        })
-        
-        $urlRouterProvider.otherwise('/config');
-    }]);
+  angular.module('tools.controllers', []);
 
   angular.module('services', ['data-service', 'utils', 'app.misc'])
     
 })();
 'app controller goes here';
-(function() {
-  'use strict';
+angular.module('data-approve')
 
-angular.module('tools.components', [])
+.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+      
+  $stateProvider
+    .state('upload', {
+      url: "/upload-file",
+      templateUrl: 'pages/upload-file.html',
+      controller: 'UploadFileCtrl'
+    })
+    .state('config', {
+      url: "/config",
+      templateUrl: 'pages/config-place.html',
+      controller: 'ConfigPlaceCtrl'
+    })
 
-.directive('comparedValues', ['utils', function(utils) {
-  return {
-    scope: {
-      place: '=',
-      key: '=',
-      provider: '='
-    },
-    restrict: 'EA',
-    template: '<span><label>{{key}}</label>: {{value}}</span>',
-    link: function(scope, elm, attrs) {
+    .state('scan_data', {
+      url: "/scan-data",
+      templateUrl: 'pages/scan-data/scan-data.html',
+      abstract: true
+    })
+    .state('scan_data.geocode', {
+      url: "/geocode",
+      templateUrl: 'pages/scan-data/scan-data.geocode.html',
+      controller: 'SetGeocodeCtrl'
+    })
+    .state('scan_data.shortnames', {
+      url: "/shortnames",
+      templateUrl: 'pages/scan-data/scan-data.shortnames.html',
+      controller: 'ShortnamesCtrl'
+    })
 
-      scope.value = utils.getPropByString(scope.place, scope.key, scope.provider);
+    // Manage Places
+    .state('places', {
+      url: "/places",
+      templateUrl: 'pages/places.html',
+      abstract: true
+    })
+    .state('places.main', {
+      url: '',
+      templateUrl: 'pages/places.main.html',
+      controller: 'ManagePlacesCtrl'
+    })
+    .state('places.detail', {
+      url: "/:id",
+      templateUrl: 'pages/places.detail.html',
+      controller: 'ManagePlacesDetailCtrl'
+    })
 
-      console.log(scope.place);
-
-      console.log(scope.key);
-      console.log(scope.value);
-    }
-  }
-
-}])
-
-.filter('percentage', ['$filter', function($filter) {
-    return function(input, decimals) {
-        return $filter('number')(input*100, decimals)+'%';
-    };
+    .state('reviews', {
+      url: "/get-reviews",
+      templateUrl: 'pages/get-reviews.html',
+      controller: 'GetReviewsCtrl'
+    })
+    
+    $urlRouterProvider.otherwise('/config');
 }]);
+
+(function() {
+  angular.module('tools.controllers')
+
+  .controller('SetGeocodeCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
+
+    $scope.setGeocode = function() {
+      placeAPI.setGeocode()
+      .success(function(data) {
+
+      });
+    };
+  }])
+
+  .controller('ShortnamesCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
+
+    $scope.newWord = {
+      group_one: {},
+      group_two: {}
+    };
+
+    $scope.shortNameConfig = {
+      removeCompany: true,
+      group_one: [],
+      group_two: []
+    };
+
+    $scope.loading = {
+      words: false,
+      saving: false
+    };
+
+    function Word(options) {
+      this.word = options.word;
+      this.full_word = options.full_word || false;
+    }
+
+    // Add word to list
+    $scope.addWord = function(ref, options) {
+      var word = new Word(options);
+      $scope.shortNameConfig[ref].push(word);
+      $scope.newWord[ref] = {};
+    };
+
+    // Remove word from list
+    $scope.removeWord = function(ref, word) {
+      var list = $scope.shortNameConfig[ref];
+
+      for (var i = 0, l = list.length; i < l; i++) {
+        if (list[i] === word) {
+          list.splice(i, 1);
+          break;
+        }
+      }
+    };
+
+    // Search for most common words in name field of place
+    $scope.commonWords = function() {
+      $scope.loading.words = true;
+
+      placeAPI.mostCommonWords('name')
+      .success(function(data) {
+
+        $scope.loading.words = false;
+
+        $scope.commonWords = data;
+      });
+    };
+
+    $scope.buildShortNames = function() {
+      $scope.loading.saving = true;
+
+      placeAPI.buildShortNames($scope.shortNameConfig)
+      .success(function(data) {
+
+        $scope.loading.saving = false;
+        console.log(data);
+      });
+    };
+
+  }]);
 
 })();
 (function(){
   'use strict';
 
-  angular.module('tools.controllers',[])
+  angular.module('tools.controllers')
     .controller('ManagePlacesCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
 
       // Table filtering
@@ -167,16 +232,6 @@ angular.module('tools.components', [])
 
     }])
 
-    .controller('ScanDataCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
-
-      $scope.setGeocode = function() {
-        placeAPI.setGeocode()
-        .success(function(data) {
-
-        });
-      };
-
-    }])
 
     .controller('UploadFileCtrl',  [ '$scope', 'placeAPI', function($scope, placeAPI) {
 
@@ -645,6 +700,26 @@ angular.module('data-service', [])
     });
   };
 
+  // Build shortnames
+  // -----------------
+  placeAPI.mostCommonWords = function(key) {
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/config/word-frequency',
+      params: {
+        key: key
+      }
+    });
+  };
+
+  placeAPI.buildShortNames = function(config) {
+    return $http({
+      method: 'POST',
+      url: BASE_URL + '/config/short-names',
+      data: config
+    });
+  }
+
   return placeAPI;
 
 }]);
@@ -740,4 +815,38 @@ angular.module('data-service', [])
 
     return utils;
   }])
+})();
+(function() {
+  'use strict';
+
+angular.module('tools.components', [])
+
+.directive('comparedValues', ['utils', function(utils) {
+  return {
+    scope: {
+      place: '=',
+      key: '=',
+      provider: '='
+    },
+    restrict: 'EA',
+    template: '<span><label>{{key}}</label>: {{value}}</span>',
+    link: function(scope, elm, attrs) {
+
+      scope.value = utils.getPropByString(scope.place, scope.key, scope.provider);
+
+      console.log(scope.place);
+
+      console.log(scope.key);
+      console.log(scope.value);
+    }
+  }
+
+}])
+
+.filter('percentage', ['$filter', function($filter) {
+    return function(input, decimals) {
+        return $filter('number')(input*100, decimals)+'%';
+    };
+}]);
+
 })();

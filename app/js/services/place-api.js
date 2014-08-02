@@ -63,6 +63,26 @@ angular.module('data-service', [])
     });
   };
 
+  // Build shortnames
+  // -----------------
+  placeAPI.mostCommonWords = function(key) {
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/config/word-frequency',
+      params: {
+        key: key
+      }
+    });
+  };
+
+  placeAPI.buildShortNames = function(config) {
+    return $http({
+      method: 'POST',
+      url: BASE_URL + '/config/short-names',
+      data: config
+    });
+  }
+
   return placeAPI;
 
 }]);

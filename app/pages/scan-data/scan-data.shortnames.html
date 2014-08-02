@@ -1,0 +1,152 @@
+
+<div>
+	<div class="row">
+
+		<!-- show most common words -->
+		<div class="col-sm-6">
+			<h2>Most Common Words in Name</h2>
+
+			<button class="btn btn-default" ng-click="commonWords()">
+				<span ng-hide="loading.words">Most common words</span>
+				<span ng-show="loading.words"><i class="fa fa-spinner fa-spin"></i></span>
+			</button>
+
+			<table class="table table-striped table-condensed">
+				<thead>
+					<tr>
+						<th>Word</th>
+						<th>Count</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="w in commonWords">
+						<td>{{w.term}}</td>
+						<td>{{w.tf}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- short name builder -->
+		<div class="col-sm-6">
+			<h2>Build Short Names Config</h2>
+
+			<form>
+
+				<!-- remove company info -->
+				<div class="checkbox">
+					<label>
+						<input ng-model="shortNameConfig.removeCompany" type="checkbox"> Remove misc. company info	(inc, llc, incorporated)				
+					</label>
+				</div>
+
+				<!-- Group 1 -->
+				<div class="well">
+					<h3>Group One (misc words)</h3>
+
+					<!-- word -->
+					<div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Word</label>
+									<input ng-model="newWord.group_one.word" class="form-control" type="text">
+								</div>
+							</div>
+
+							<!-- full word or not -->
+							<div class="col-sm-6">
+								<div class="checkbox">
+									<label>
+										<input ng-model="newWord.group_one.full_word" type="checkbox"> Full word *
+									</label>
+								</div>
+							</div>
+						</div>
+
+						<button ng-click="addWord('group_one', newWord.group_one);" class="btn btn-primary">Add Word</button>
+					</div>
+
+					<!-- list of words in group -->
+					<table ng-if="shortNameConfig.group_one.length > 0" class="table table-striped">
+						<thead>
+							<tr>
+								<th>Word</th>
+								<th>Full Word</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="w in shortNameConfig.group_one">
+								<td>{{w.word}}</td>
+								<td>{{w.full_word}}</td>
+								<td>
+									<button ng-click="removeWord('group_one', w)" class="btn btn-danger">Remove</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+
+				<!-- Group 2 -->
+				<div class="well">
+					<h3>Group Two (brand name)</h3>
+
+					<!-- word -->
+					<div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label>Word</label>
+									<input ng-model="newWord.group_two.word" class="form-control" type="text">
+								</div>
+							</div>
+
+							<!-- full word or not -->
+							<div class="col-sm-6">
+								<div class="checkbox">
+									<label>
+										<input ng-model="newWord.group_two.full_word" type="checkbox"> Full word *
+									</label>
+								</div>
+							</div>
+						</div>
+
+						<button ng-click="addWord('group_two', newWord.group_two)" class="btn btn-primary">Add Word</button>
+					</div>
+
+					<!-- list of words in group -->
+					<table ng-if="shortNameConfig.group_two.length > 0" class="table table-striped">
+						<thead>
+							<tr>
+								<th>Word</th>
+								<th>Full Word</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="w in shortNameConfig.group_two">
+								<td>{{w.word}}</td>
+								<td>{{w.full_word}}</td>
+								<td>
+									<button ng-click="removeWord('group_two', w)" class="btn btn-danger">Remove</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+
+				<div>
+					<button ng-click="buildShortNames()" class="btn btn-lg btn-primary">
+						<span ng-hide="loading.saving">Build short names</span>
+						<span ng-show="loading.saving"><i class="fa fa-spinner fa-spin"></i></span>
+					</button>
+				</div>
+
+				* (for words like "and" to search only for that - not "sand")
+			</form>
+		</div>
+	</div>	
+</div>

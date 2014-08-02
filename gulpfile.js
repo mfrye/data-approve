@@ -3,7 +3,12 @@ var plugins = require("gulp-load-plugins")({lazy:false});
 
 gulp.task('scripts', function(){
     //combine all js files of the app
-    gulp.src(['./app/**/*.js'])
+    gulp.src([
+      './app/js/*.js',
+      './app/js/controllers/**/*.js',
+      './app/js/services/**/*.js',
+      './app/js/components/**/*.js'
+      ])
         .pipe(plugins.jshint())
         .pipe(plugins.jshint.reporter('default'))
         .pipe(plugins.concat('app.js'))
