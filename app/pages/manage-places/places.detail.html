@@ -1,0 +1,122 @@
+<div class="container">
+	<h3>Place Detail</h3>
+
+	<div class="well">
+		<form>
+			<div class="row">
+				<div class="col-sm-6">
+
+					<!-- name -->
+					<div class="form-group">
+						<label>Place Name</label>
+						<input ng-model="place.name" class="form-control" type="text">
+					</div>
+
+					<!-- short names -->
+					<div class="form-group" ng-repeat="name in place.short_names">
+						<label>Short Name {{$index + 1 }}</label>
+						<input ng-model="name" class="form-control" type="text">
+					</div>
+
+					
+				</div>
+
+				<!-- right column -->
+				<div class="col-sm-6">
+
+					<!-- street -->
+					<div class="form-group">
+						<label>Street</label>
+						<input ng-model="place.address.street" class="form-control" type="text">
+					</div>
+
+					<!-- city -->
+					<div class="form-group">
+						<label>City</label>
+						<input ng-model="place.address.city" class="form-control" type="text">
+					</div>
+
+					<!-- state -->
+					<div class="form-group">
+						<label>State</label>
+						<input ng-model="place.address.state" class="form-control" type="text">
+					</div>
+
+					<!-- zip -->
+					<div class="form-group">
+						<label>Zip</label>
+						<input ng-model="place.address.zip" class="form-control" type="text">
+					</div>
+
+					<!-- longitude -->
+					<div class="form-group">
+						<label>Longitude</label>
+						<input ng-model="place.location.longitude" class="form-control" type="text">
+					</div>
+
+					<!-- latitude -->
+					<div class="form-group">
+						<label>Latitude</label>
+						<input ng-model="place.location.latitude" class="form-control" type="text">
+					</div>
+				</div>
+			</div>
+
+			<div class="">
+				<tabset>
+
+					<!-- google -->
+			    <tab heading="Google">
+			    	<!-- id -->
+						<div class="form-group">
+							<label>Id</label>
+							<input ng-model="place.google.id" class="form-control" type="text">
+						</div>
+
+						<!-- url -->
+						<div class="form-group">
+							<label>Url</label>
+							<input ng-model="place.google.url" class="form-control" type="text">
+						</div>
+			    </tab>
+			   	
+			   	<!-- facebook -->
+			   	<tab heading="Faceook">
+			    	<!-- id -->
+						<div class="form-group">
+							<label>Id</label>
+							<input ng-model="place.facebook.id" class="form-control" type="text">
+						</div>
+
+						<!-- url -->
+						<div class="form-group">
+							<label>Url</label>
+							<input ng-model="place.facebook.url" class="form-control" type="text">
+						</div>
+			    </tab>
+
+			    <!-- yelp -->
+			    <tab heading="Yelp">
+			    	<!-- id -->
+						<div class="form-group">
+							<label>Id</label>
+							<input ng-model="place.yelp.id" class="form-control" type="text">
+						</div>
+
+						<!-- url -->
+						<div class="form-group">
+							<label>Url</label>
+							<input ng-model="place.yelp.url" class="form-control" type="text">
+						</div>
+			    </tab>
+			  </tabset>
+
+			</div>
+
+			<!-- Save -->
+			<div>
+				<button ng-click="savePlace()" class="btn btn-lg btn-primary">Save</button>
+			</div>
+		</form>
+	</div>
+</div>

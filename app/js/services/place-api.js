@@ -10,10 +10,32 @@ angular.module('data-service', [])
   var placeAPI = {};
 
   placeAPI.getPlaces = function() {
-    console.log('getting')
     return $http({
       method: 'GET',
       url: BASE_URL + '/places'
+    });
+  };
+
+  placeAPI.savePlaces = function(data) {
+    return $http({
+      method: 'POST',
+      url: BASE_URL + '/places',
+      data: data
+    });
+  };
+
+  placeAPI.getPlace = function(id) {
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/places/' + id
+    });
+  };
+
+  placeAPI.savePlace = function(place) {
+    return $http({
+      method: 'PUT',
+      url: BASE_URL + '/places/' + place._id,
+      data: place
     });
   };
 
@@ -26,14 +48,6 @@ angular.module('data-service', [])
         next: data.next,
         state: data.state
       }
-    });
-  };
-
-  placeAPI.savePlace = function(data) {
-    return $http({
-      method: 'POST',
-      url: BASE_URL + '/place',
-      data: data
     });
   };
 

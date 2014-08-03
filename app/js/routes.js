@@ -33,17 +33,17 @@ angular.module('data-approve')
     // Manage Places
     .state('places', {
       url: "/places",
-      templateUrl: 'pages/places.html',
+      templateUrl: 'pages/manage-places/places.html',
       abstract: true
     })
     .state('places.main', {
       url: '',
-      templateUrl: 'pages/places.main.html',
+      templateUrl: 'pages/manage-places/places.main.html',
       controller: 'ManagePlacesCtrl'
     })
     .state('places.detail', {
       url: "/:id",
-      templateUrl: 'pages/places.detail.html',
+      templateUrl: 'pages/manage-places/places.detail.html',
       controller: 'ManagePlacesDetailCtrl'
     })
 
