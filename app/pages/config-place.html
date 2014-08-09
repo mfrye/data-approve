@@ -17,8 +17,14 @@
     </div>
 
     <div class="col-sm-6">
-      <button class="btn btn-lg btn-primary" type="button" ng-click="getPlaces()">Get Places</button>
-      <button class="btn btn-lg btn-primary" type="button" ng-click="savePlaces()">Save</button>
+      <button class="btn btn-lg btn-primary" type="button" ng-click="getPlaces()">
+        <span ng-hide="status.loading">Get Places</span>
+        <span ng-show="status.loading"><i class="fa fa-spinner fa-spin"></i> Loading...</span>
+      </button>
+      <button class="btn btn-lg btn-primary" type="button" ng-click="savePlaces()">
+        <span ng-hide="status.saving">Save</span>
+        <span ng-show="status.saving"><i class="fa fa-spinner fa-spin"></i> Saving...</span>
+      </button>
     </div>
   </div>
 </div>
@@ -44,6 +50,10 @@
           <div class="col-sm-6">
             <div class="assess-header">
               <h3>Saved</h3>
+
+              <!-- website link -->
+              <a class="btn btn-primary" ng-if="place.saved.url" ng-href="{{place.saved.url}}" target="_blank">Website</a>
+
               <div class="dealer-info">
                 <p><label>Name:</label> {{place.saved.name}}</p>
                 <p><label>Street:</label> {{place.saved.address.street}}</p>
@@ -86,6 +96,12 @@
             <accordion close-others="true">
                 
                 <accordion-group heading="{{option.place.name}}" ng-repeat="option in place.processed" is-open="option.open" ng-click="showCurrentOpen(place, option)">
+                  <!-- website link -->
+                  <a class="btn btn-primary" ng-if="option.place.url" ng-href="{{option.place.url}}" target="_blank">Website</a>
+
+                  <!-- website link -->
+                  <a class="btn btn-primary" ng-if="option.place.link" ng-href="{{option.place.link}}" target="_blank">Website</a>
+                  
                   <pre>{{option.place | json}}</pre>
                 </accordion-group>
 

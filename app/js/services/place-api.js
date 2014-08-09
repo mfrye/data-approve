@@ -16,6 +16,13 @@ angular.module('data-service', [])
     });
   };
 
+  placeAPI.getConfigured = function() {
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/places/summary/charts'
+    })
+  };
+
   placeAPI.savePlaces = function(data) {
     return $http({
       method: 'POST',

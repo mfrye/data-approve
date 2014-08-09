@@ -3,6 +3,13 @@ angular.module('data-approve')
 .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
       
   $stateProvider
+    .state('dashboard', {
+      url: '',
+      templateUrl: 'pages/dashboard/dashboard.html',
+      controller: 'DashboardCtrl'
+    })
+
+
     .state('upload', {
       url: "/upload-file",
       templateUrl: 'pages/upload-file.html',

@@ -25,6 +25,13 @@ angular.module('data-approve')
 .config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
       
   $stateProvider
+    .state('dashboard', {
+      url: '',
+      templateUrl: 'pages/dashboard/dashboard.html',
+      controller: 'DashboardCtrl'
+    })
+
+
     .state('upload', {
       url: "/upload-file",
       templateUrl: 'pages/upload-file.html',
@@ -76,6 +83,261 @@ angular.module('data-approve')
     })
     
     $urlRouterProvider.otherwise('/config');
+}]);
+
+angular.module('tools.controllers')
+
+.controller('ConfigPlaceCtrl', ['$scope', 'placeAPI', 'misc', 'utils', function ($scope, placeAPI, misc, utils) {
+
+  // List of state to populate select
+  $scope.stateOptions = misc.getStates;
+
+  // List of providers
+  $scope.providers = misc.getProviders;
+
+  $scope.state = $scope.stateOptions[0].abbreviation;
+  $scope.provider = $scope.providers[0];
+
+  $scope.stats = {
+    total: null,
+    start: null,
+    end: 0
+  };
+
+  $scope.status = {
+    loading: false,
+    saving: false
+  };
+
+  var next = null;
+
+  // Return value of compared fields
+  $scope.comparedValue = utils.getPropByString;
+
+  
+  // Set possible match area to current open accordion
+  $scope.showCurrentOpen = function(place, possible) {
+    place.suggestion = possible;
+  };
+  
+
+  // None of the results match
+  $scope.setAsNone = function(dealer) {
+    dealer.suggestion = null;
+  };
+
+  // Save current list of dealers
+  $scope.savePlaces = function() {
+    var places = utils.formatSave($scope.places.assess, $scope.provider);
+
+    $scope.status.saving = true;
+
+    console.log(places);
+
+    placeAPI.savePlaces(places)
+    .success(function(data) {
+
+      $scope.status.saving = false;
+
+    })
+    .error(function(data) {
+
+    })
+  };
+
+  // Get dealers from backend
+  $scope.getPlaces = function() {
+    var params = {
+      state: $scope.state,
+      next: next,
+      provider: $scope.provider
+    };
+
+    $scope.status.loading = true;
+
+    placeAPI.getInfo(params)
+    .success(function(data) {
+
+      $scope.status.loading = false;
+
+      $scope.places = utils.processPlaces(data);
+      next = data.next;
+
+      if (!$scope.stats.start) {
+        $scope.stats.start = 0;
+      } else {
+        $scope.stats.start = $scope.stats.start + data.count;
+      }
+
+      $scope.stats.end = $scope.stats.end + data.count;
+
+    })
+    .error(function(data) {
+      console.log(data);
+    });
+  };
+
+}]);
+angular.module('tools.controllers')
+
+.controller('DashboardCtrl', [ '$scope', 'placeAPI', function($scope, placeAPI) {
+
+  var testdata = [
+    {
+      key: "One",
+      y: 5
+    },
+    {
+      key: "Two",
+      y: 2
+    },
+    {
+      key: "Three",
+      y: 9
+    },
+    {
+      key: "Four",
+      y: 7
+    },
+    {
+      key: "Five",
+      y: 4
+    },
+    {
+      key: "Six",
+      y: 3
+    },
+    {
+      key: "Seven",
+      y: .5
+    }
+  ];
+
+
+  function buildGraph(data) {
+    nv.addGraph(function() {
+        var width = 500,
+            height = 500;
+
+        var chart = nv.models.pieChart()
+            .x(function(d) { return d.key })
+            .y(function(d) { return d.y })
+            .color(d3.scale.category10().range())
+            .width(width)
+            .height(height)
+            .showLegend(true)
+            ;
+
+          d3.select("#test1")
+              .datum(data)
+            .transition().duration(1200)
+              .attr('width', width)
+              .attr('height', height)
+              .call(chart);
+
+        chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+
+        return chart;
+    });
+  }
+
+// nv.addGraph(function() {
+
+//     var width = 500,
+//         height = 500;
+
+//     var chart = nv.models.donutChart()
+//         .x(function(d) { return d.key })
+//         //.y(function(d) { return d.value })
+//         // .labelThreshold(.08)
+//         .showLabels(false)
+//         .color(d3.scale.category10().range())
+//         .width(width)
+//         .height(height);
+
+//     chart.pie
+//         .startAngle(function(d) { return d.startAngle/2 -Math.PI/2 })
+//         .endAngle(function(d) { return d.endAngle/2 -Math.PI/2 });
+
+//       //chart.pie.donutLabelsOutside(true).donut(true);
+
+//       d3.select("#test2")
+//           //.datum(historicalBarChart)
+//           .datum(testdata)
+//         .transition().duration(1200)
+//           .attr('width', width)
+//           .attr('height', height)
+//           .call(chart);
+
+//     return chart;
+// });
+
+  function getScore() {
+    if (data[i].value.fb && data[i].value.google && data[i].value.yelp) {
+        sum.none++;
+      }
+  }
+  
+  function processData(data) {
+    var sum = {
+      none: 0,
+      google: 0,
+      googleFacebook: 0,
+      all: 0
+    };
+
+    data.forEach(function(row) {
+      var count = 0
+      
+      if (row.value.google) {
+        sum.google++;
+      }
+      if (row.value.google && row.value.fb) {
+        sum.googleFacebook++;
+      }
+
+      if (row.value.google && row.value.fb && row.value.yelp) {
+        sum.all++;
+      }
+
+      if (!row.value.google && !row.value.fb && !row.value.yelp) {
+        sum.none++;
+      }
+    });
+
+    return [
+      {
+        key: 'None',
+        y: sum.none
+      },
+      {
+        key: 'Google',
+        y: sum.google
+      },
+      {
+        key: 'Google and Facebook',
+        y: sum.googleFacebook
+      },
+      {
+        key: 'All',
+        y: sum.all
+      }
+    ];
+  }
+
+
+  placeAPI.getConfigured()
+  .success(function(data) {
+
+    console.log(data);
+    $scope.configured = data;
+
+    console.log(processData(data.rows));
+
+    buildGraph(processData(data.rows));
+
+  });
+
 }]);
 
 (function() {
@@ -287,85 +549,6 @@ angular.module('data-approve')
       $scope.uploadFile = function() {
         $scope.onFileSelect($scope.files);
       }
-
-    }])
-
-    .controller('ConfigPlaceCtrl', ['$scope', 'placeAPI', 'misc', 'utils', function ($scope, placeAPI, misc, utils) {
-
-      // List of state to populate select
-      $scope.stateOptions = misc.getStates;
-
-      // List of providers
-      $scope.providers = misc.getProviders;
-
-      $scope.state = $scope.stateOptions[0].abbreviation;
-      $scope.provider = $scope.providers[0];
-
-      $scope.stats = {
-        total: null,
-        start: null,
-        end: 0
-      };
-
-      var next = null;
-
-      // Return value of compared fields
-      $scope.comparedValue = utils.getPropByString;
-
-      
-      // Set possible match area to current open accordion
-      $scope.showCurrentOpen = function(place, possible) {
-        place.suggestion = possible;
-      };
-      
-
-      // None of the results match
-      $scope.setAsNone = function(dealer) {
-        dealer.suggestion = null;
-      };
-
-      // Save current list of dealers
-      $scope.savePlaces = function() {
-        var places = utils.formatSave($scope.places.assess, $scope.provider);
-
-        console.log(places);
-
-        placeAPI.savePlaces(places)
-        .success(function(data) {
-
-        })
-        .error(function(data) {
-
-        })
-      };
-
-      // Get dealers from backend
-      $scope.getPlaces = function() {
-        var params = {
-          state: $scope.state,
-          next: next,
-          provider: $scope.provider
-        };
-
-        placeAPI.getInfo(params)
-        .success(function(data) {
-
-          $scope.places = utils.processPlaces(data);
-          next = data.next;
-
-          if (!$scope.stats.start) {
-            $scope.stats.start = 0;
-          } else {
-            $scope.stats.start = $scope.stats.start + data.count;
-          }
-
-          $scope.stats.end = $scope.stats.end + data.count;
-
-        })
-        .error(function(data) {
-          console.log(data);
-        });
-      };
 
     }])
 
@@ -677,6 +860,13 @@ angular.module('data-service', [])
       method: 'GET',
       url: BASE_URL + '/places'
     });
+  };
+
+  placeAPI.getConfigured = function() {
+    return $http({
+      method: 'GET',
+      url: BASE_URL + '/places/summary/charts'
+    })
   };
 
   placeAPI.savePlaces = function(data) {

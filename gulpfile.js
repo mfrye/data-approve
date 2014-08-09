@@ -46,7 +46,9 @@ gulp.task('vendorJS', function(){
       './bower_components/ng-file-upload/angular-file-upload.min.js',
       './bower_components/angular-ui-router/release/angular-ui-router.js',
       './bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
-      './bower_components/smart-table/dist/smart-table-main.js'
+      './bower_components/smart-table/dist/smart-table-main.js',
+      './bower_components/d3/d3.min.js',
+      './bower_components/nvd3/nv.d3.min.js'
     ])
       .pipe(plugins.concat('lib.js'))
       .pipe(gulp.dest('./build'));
@@ -59,6 +61,16 @@ gulp.task('vendorLess', function(){
       ])
       .pipe(plugins.less())
       .pipe(plugins.concat('lib.css'))
+      .pipe(gulp.dest('./build/css'));
+});
+
+gulp.task('vendorCss', function(){
+    //concatenate vendor CSS files
+    gulp.src([
+        './bower_components/nvd3/nv.d3.min.css'
+      ])
+      .pipe(plugins.less())
+      .pipe(plugins.concat('nvd3.css'))
       .pipe(gulp.dest('./build/css'));
 });
 
@@ -89,4 +101,4 @@ gulp.task('connect', plugins.connect.server({
     livereload: true
 }));
 
-gulp.task('default',['connect','scripts','templates','fonts', 'less','copy-index','vendorJS','vendorLess','watch']);
+gulp.task('default',['connect','scripts','templates','fonts', 'less','copy-index','vendorJS','vendorLess', 'vendorCss', 'watch']);
